@@ -1,6 +1,7 @@
 #include "driverlib/pin_map.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
@@ -32,6 +33,7 @@ UARTConfigSetExpClk(UART1_BASE, SysCtlClockGet(), 9600,(UART_CONFIG_WLEN_8 | UAR
 while (1){
 
 UARTCharPut(UART0_BASE, UARTCharGet(UART1_BASE));
+char thing[5] = "Hello";
 
 
 
