@@ -11,7 +11,7 @@ $(GEN_CMDS__FLAG) \
 "./tm4c123gh6pm_startup_ccs.obj" \
 "./main.obj" \
 -l"libc.a" \
-"C:/ti/TivaWare_C_Series-2.1.1.71/driverlib/ccs/Debug/driverlib.lib" \
+"C:/TI/TivaWare_C_Series-1.1/driverlib/ccs/Debug/driverlib.lib" \
 "../tm4c123gh6pm.cmd" \
 
 -include ../makefile.init
