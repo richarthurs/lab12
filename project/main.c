@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
@@ -18,14 +19,21 @@ void UARTIntHandler(void){
 	ui32Status = UARTIntStatus(UART1_BASE, true); //get interrupt status
 	UARTIntClear(UART1_BASE, ui32Status); //clear the asserted interrupts
 
+	int32_t result = 0;
+
 	while(UARTCharsAvail(UART1_BASE)){ //loop while there are chars
-		int32_t result =  UARTCharGetNonBlocking(UART1_BASE);
-		unsigned char a = '/n';
-		if(result == 32){
-			UARTCharPutNonBlocking(UART0_BASE,a);
+		result =  UARTCharGetNonBlocking(UART1_BASE);
+//		 char a = '\n';
+//		if(result == 32){
+//			UARTCharPutNonBlocking(UART0_BASE,a);
+//		}
+		if(result == 36){
+			UARTCharPutNonBlocking(UART0_BASE, '\n');//spit out character
 		}
+		int32_t thingy = 73;
 
 		//	UARTCharPutNonBlocking(UART0_BASE, UARTCharGetNonBlocking(UART1_BASE));//spit out character
+			UARTCharPutNonBlocking(UART0_BASE, result);//spit out character
 //			GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_PIN_2); //blink LED
 //			SysCtlDelay(SysCtlClockGet() / (1000 * 3)); //delay ~1 msec
 //			GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, 0); //turn off LED

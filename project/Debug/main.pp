@@ -8,6 +8,8 @@ main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/stdarg.h
 main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/linkage.h
 main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/_lock.h
 main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/string.h
+main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/stdio.h
+main.obj: C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/stdarg.h
 main.obj: C:/TI/TivaWare_C_Series-1.1/inc/hw_memmap.h
 main.obj: C:/TI/TivaWare_C_Series-1.1/inc/hw_types.h
 main.obj: C:/TI/TivaWare_C_Series-1.1/driverlib/gpio.h
@@ -25,6 +27,8 @@ C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/stdarg.h:
 C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/linkage.h: 
 C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/_lock.h: 
 C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/string.h: 
+C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/stdio.h: 
+C:/ti/ccsv5/tools/compiler/arm_5.1.13/include/stdarg.h: 
 C:/TI/TivaWare_C_Series-1.1/inc/hw_memmap.h: 
 C:/TI/TivaWare_C_Series-1.1/inc/hw_types.h: 
 C:/TI/TivaWare_C_Series-1.1/driverlib/gpio.h: 
