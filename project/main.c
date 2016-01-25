@@ -14,9 +14,8 @@
 #include "inc/hw_ints.h"
 #include "driverlib/interrupt.h"
 
-char data[2000];
-char master [2000];
-uint8_t xlines = 0;
+ char data[2000];
+ volatile bool fired = false;
 
 	//	UARTIntDisable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
 
@@ -25,97 +24,69 @@ uint8_t xlines = 0;
 
 		//UARTIntEnable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
 
-void output(char buffer[]){
+void output(char buffer[2000]){
+
+	UARTIntDisable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
+
 		uint32_t i = 0;
 		for(i = 0; i <= strlen(buffer); i++){
-			UARTCharPutNonBlocking(UART0_BASE, buffer[i]);
+			if(buffer[i] == 'G' && buffer[i+1] =='P' && buffer[i+2] == 'G' && buffer[i+3] == 'G' && buffer[i+4] == 'A'){
+				uint32_t start = i+15;
+				uint32_t t = 0;
+				for(t = 0; t <= start + 15; t++){
+					UARTCharPut(UART0_BASE, data[start+t]);
+				}
+				break;
+			}
+			else{
+
+			}
+		//	UARTCharPut(UART0_BASE, buffer[i]);
 		}
-		UARTCharPutNonBlocking(UART0_BASE, '\n');
-}
-uint8_t analyze(char mydata[2000]){
-	uint32_t i = 0;
-	uint8_t dollas = 0;
-	for(i = 0; i <= strlen(mydata); i++){
-		if(mydata[i] == '$'){
-			dollas++;
-		}
-	}
-	return dollas;
-	//UARTCharPutNonBlocking(UART0_BASE, '\n');
-	//if(dollas == 9) return true;
-	//else return false;
+
+		//UARTIntEnable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
+	//	UARTCharPutNonBlocking(UART0_BASE, '\n');
 }
 
-void UARTIntHandler(void){
-
+ UARTIntHandler(void){
+	//UARTCharPutNonBlocking(UART0_BASE, 'Z'); 	// to print out the data itself
 	uint32_t ui32Status;
 	ui32Status = UARTIntStatus(UART1_BASE, true); //get interrupt status
 	UARTIntClear(UART1_BASE, ui32Status); //clear the asserted interrupts
 
-	uint32_t counter = 0;	// make a counter to put the new character into the correct array position
+	volatile uint32_t counter = strlen(data);	// make a counter to put the new character into the correct array position
 	char result;
 	//memset(data,0,sizeof(data));	// this zeros out the data array
-	while(UARTCharsAvail(UART1_BASE)){ //loop while there are chars
-		result = (char)UARTCharGet(UART1_BASE);
-		data[counter] = result;
-		if(data[counter] == '$'){
-			xlines++;
+
+	if(ui32Status != UART_INT_RT){
+		fired = false;
+		while(UARTCharsAvail(UART1_BASE)){ //loop while there are chars
+				result = (char)UARTCharGet(UART1_BASE);
+				data[counter] = result;
+			//	UARTCharPutNonBlocking(UART0_BASE, data[counter]); 	// to print out the data itself
+				counter++;
+			//	width++;
+		//		if(result == '$'){
+		//			lines++;
+		//		}
 		}
-	//	UARTCharPutNonBlocking(UART0_BASE, data[counter]); 	// to print out the data itself
-		counter++;
 	}
-	//while(!UARTCharsAvail(UART1_BASE)){
-		//// stuff went here
-//		UARTCharPutNonBlocking(UART0_BASE, 'p'); 	// enable me to see when the interrupt is firing
-	//}
 
 
+	if(ui32Status == UART_INT_RT && fired == false){		//
+		fired = true;
+		//UARTIntDisable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
+	//	output(data);
+	//	UARTCharPutNonBlocking(UART0_BASE, 'Z');
+		UARTCharPutNonBlocking(UART0_BASE, '\n'); 	// to print out the data itself
+		output(data);
+		memset(data,0,sizeof(data));	// this zeros out the data array
+		UARTIntEnable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
 
-//	uint32_t f = 0;	// for my for loop
-//	volatile uint8_t lines = 0;
-//	for(f = 0; f <= strlen(data); f++){
-//		if(data[f] == '$'){
-////			UARTCharPutNonBlocking(UART0_BASE, 'P'); 	// this works to print out a Z
-////			UARTCharPutNonBlocking(UART0_BASE, '\n'); 	// this works to print out a Z
-//			lines++;
-//		}
-//	}
-//
-//		if(lines >= 6){
-//			UARTIntDisable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
-//
-//	//		UARTCharPutNonBlocking(UART0_BASE, '\n'); 	// this works to print out a Z
-//		//	UARTCharPutNonBlocking(UART0_BASE, 'Z'); 	// this works to print out a Z
-//		//	UARTCharPutNonBlocking(UART0_BASE, '\n'); 	// this works to print out a Z
-//			memset(master,0,sizeof(master));
-//		}
+	}
+	//memset(data,0,sizeof(data));	// this zeros out the data array
+ }
 
-
-
-
-//	UARTCharPutNonBlocking(UART0_BASE, '\n'); 	// this works to print out a Z
-//	if(analyze(master) > 8){
-//		UARTIntDisable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
-//		output(master);
-//		UARTIntEnable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
-//
-//	}
-
-	//UARTCharPutNonBlocking(UART0_BASE, '\n' );	// snag the character from the UART
-		//UARTIntEnable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
-
-	counter = 0;
-}
-void thingy(char mydata[]){
-//	uint8_t lines = analyze(mydata);
-//	if(lines >> 2){
-//		output(data);
-//	}
-//	// let's clear everything out of the data array
-	output(data);
-	memset(data,0,sizeof(data));
-
-}
 
 
 int main(void) {
@@ -152,14 +123,15 @@ GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2);
 
 
 while (1){
-
-	if(xlines >= 8){
-				UARTIntDisable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
-				xlines = 0;
-				output(data);
-				memset(data,0,sizeof(data));	// this zeros out the data array
-				UARTIntEnable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
-		}
+	//output(data);
+//if(lines >=8 ){
+//	UARTIntDisable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
+//	lines = 0;
+//	output(data);
+//	memset(data,0,sizeof(data));	// this zeros out the data array
+//	width = 0;
+//	UARTIntEnable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
+//}
 
 //	thingy(data);
 //UARTCharPut(UART0_BASE, UARTCharGet(UART1_BASE));
