@@ -35,19 +35,26 @@ void output(char buffer[1000]){
 	UARTIntClear(UART1_BASE, ui32Status); //clear the asserted interrupts
 
 	volatile uint32_t counter = strlen(data);	// make a counter to put the new character into the correct array position
+	static uint8_t numLines = 8;
 
 	if(ui32Status != UART_INT_RT && ui32Status == UART_INT_RX){	// we haven't timed out but we did receive a character
 
 		char result;
-		while (lines < 8){	// check for characters until we reach the correct number of lines
+		while (lines < numLines){	// check for characters until we reach the correct number of lines
 			while(UARTCharsAvail(UART1_BASE)){ //loop while there are chars
 				result = (char)UARTCharGet(UART1_BASE);
 
 				data[counter] = result;	// put the char at the end of the string
 				counter++;
 
+
 				if (result == '\n'){
 					lines++;
+				}
+
+
+				if (counter >> 9 && data[(strlen(data) - 1)] == 'V' && data[(strlen(data) - 2)] == 'S'){		// we need to determine the number of satellites seen
+						numLines = 9;//(5 + (result - '0'));
 				}
 			}
 		}
@@ -55,7 +62,7 @@ void output(char buffer[1000]){
 	}
 
 
-	if (lines == 8){	// when we have 8 complete lines, do other stuff
+	if (lines == numLines){	// when we have 8 complete lines, do other stuff
 		UARTIntDisable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// turn off RX and RT (timeout) interrupts so we don't interrupt ourselves
 
 		output(data);
