@@ -12,6 +12,7 @@
 // Forward declaration of the default fault handlers.
 //
 //*****************************************************************************
+
 void ResetISR(void);
 static void NmiSR(void);
 static void FaultISR(void);
@@ -40,8 +41,8 @@ extern unsigned long __STACK_TOP;
 // the program if located at a start address other than 0.
 //
 //*****************************************************************************
-#pragma DATA_SECTION(g_pfnVectors, ".intvecs")
-void (* const g_pfnVectors[])(void) =
+#pragma DATA_SECTION(".intvecs")
+extern "C++" void (* const g_pfnVectors[])(void) =
 {
     (void (*)(void))((unsigned long)&__STACK_TOP),
                                             // The initial stack pointer

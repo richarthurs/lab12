@@ -1,9 +1,10 @@
-//#include "driverlib/pin_map.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
 
+extern "C"{
+#include "inc/hw_gpio.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
 #include "driverlib/gpio.h"
@@ -13,6 +14,12 @@
 
 #include "inc/hw_ints.h"
 #include "driverlib/interrupt.h"
+}
+
+
+#include "richGPS.h"
+
+GPS gps;
 
 
 void output(char buffer[1000]){
@@ -25,7 +32,7 @@ void output(char buffer[1000]){
 		UARTCharPut(UART0_BASE, '\n');
 }
 
- UARTIntHandler(void){
+ extern "C++" void UARTIntHandler(void){
 
 	 static char data[1000];	// this will keep its value between calls to the interrupt
 	 static uint8_t lines = 0;	// we count the number of lines so that we get a complete set of sentences
@@ -35,7 +42,7 @@ void output(char buffer[1000]){
 	UARTIntClear(UART1_BASE, ui32Status); //clear the asserted interrupts
 
 	volatile uint32_t counter = strlen(data);	// make a counter to put the new character into the correct array position
-	static uint8_t numLines = 8;
+	static uint8_t numLines = 7;
 
 	if(ui32Status != UART_INT_RT && ui32Status == UART_INT_RX){	// we haven't timed out but we did receive a character
 
@@ -88,18 +95,10 @@ GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1); // set pins for UART
 UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 57600,(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
 
 
-// Config GPS-side UART
-SysCtlPeripheralEnable(SYSCTL_PERIPH_UART1);// Enable UART hardware
-SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);// Enable Pin hardware
-GPIOPinConfigure(GPIO_PC4_U1RX);// Configure GPIO pin for UART RX line
-GPIOPinConfigure(GPIO_PC5_U1TX);// Configure GPIO Pin for UART TX line
-GPIOPinTypeUART(GPIO_PORTC_BASE, GPIO_PIN_4 | GPIO_PIN_5); // set pins for UART
-UARTConfigSetExpClk(UART1_BASE, SysCtlClockGet(), 9600,(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+gps.Init();
+gps.InterruptEnable();
 
-// Enable interrupts for GPS-side UART
-IntMasterEnable();		// master interrupt enable
-IntEnable(INT_UART1);
-UARTIntEnable(UART1_BASE, UART_INT_RX | UART_INT_RT);	// receiver RX and receiver timeout interrupts RT(timeout = 32 bits)
+
 
 // Turn on GPIO for example
 SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);

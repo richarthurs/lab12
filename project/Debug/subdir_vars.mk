@@ -3,34 +3,38 @@
 ################################################################################
 
 # Add inputs and outputs from these tool invocations to the build variables 
+CPP_SRCS += \
+../main.cpp \
+../richGPS.cpp \
+../tm4c123gh6pm_startup_ccs.cpp 
+
 CMD_SRCS += \
 ../tm4c123gh6pm.cmd 
 
 LIB_SRCS += \
 C:/TI/TivaWare_C_Series-1.1/driverlib/ccs/Debug/driverlib.lib 
 
-C_SRCS += \
-../main.c \
-../tm4c123gh6pm_startup_ccs.c 
-
 OBJS += \
 ./main.obj \
+./richGPS.obj \
 ./tm4c123gh6pm_startup_ccs.obj 
 
-C_DEPS += \
+CPP_DEPS += \
 ./main.pp \
+./richGPS.pp \
 ./tm4c123gh6pm_startup_ccs.pp 
 
-C_DEPS__QUOTED += \
+CPP_DEPS__QUOTED += \
 "main.pp" \
+"richGPS.pp" \
 "tm4c123gh6pm_startup_ccs.pp" 
 
 OBJS__QUOTED += \
 "main.obj" \
+"richGPS.obj" \
 "tm4c123gh6pm_startup_ccs.obj" 
 
-C_SRCS__QUOTED += \
-"../main.c" \
-"../tm4c123gh6pm_startup_ccs.c" 
+CPP_SRCS__QUOTED += \
+"../richGPS.cpp" 
 
 

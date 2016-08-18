@@ -9,6 +9,7 @@ CG_TOOL_ROOT := C:/ti/ccsv5/tools/compiler/arm_5.1.13
 ORDERED_OBJS += \
 $(GEN_CMDS__FLAG) \
 "./tm4c123gh6pm_startup_ccs.obj" \
+"./richGPS.obj" \
 "./main.obj" \
 -l"libc.a" \
 "C:/TI/TivaWare_C_Series-1.1/driverlib/ccs/Debug/driverlib.lib" \
@@ -117,15 +118,15 @@ all: lab12.out
 lab12.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccsv5/tools/compiler/arm_5.1.13/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --define=DEBUG --define=PART_TM4C123GH6PM --define=TARGET_IS_BLIZZARD_RB1 --diag_wrap=off --display_error_number --diag_warning=225 -z -m"lab12.map" --heap_size=0 --stack_size=100 -i"C:/ti/ccsv5/tools/compiler/arm_5.1.13/lib" -i"C:/ti/ccsv5/tools/compiler/arm_5.1.13/include" --reread_libs --display_error_number --diag_wrap=off --warn_sections --xml_link_info="lab12_linkInfo.xml" --rom_model -o "lab12.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv5/tools/compiler/arm_5.1.13/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --define=DEBUG --define=PART_TM4C123GH6PM --define=TARGET_IS_BLIZZARD_RB1 --diag_wrap=off --display_error_number --diag_warning=225 -z -m"lab12.map" --heap_size=100 --stack_size=400 -i"C:/ti/ccsv5/tools/compiler/arm_5.1.13/lib" -i"C:/ti/ccsv5/tools/compiler/arm_5.1.13/include" --reread_libs --display_error_number --diag_wrap=off --warn_sections --xml_link_info="lab12_linkInfo.xml" --rom_model -o "lab12.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(TMS470_EXECUTABLE_OUTPUTS__QUOTED) "lab12.out"
-	-$(RM) "main.pp" "tm4c123gh6pm_startup_ccs.pp" 
-	-$(RM) "main.obj" "tm4c123gh6pm_startup_ccs.obj" 
+	-$(RM) "main.pp" "richGPS.pp" "tm4c123gh6pm_startup_ccs.pp" 
+	-$(RM) "main.obj" "richGPS.obj" "tm4c123gh6pm_startup_ccs.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
